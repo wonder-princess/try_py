@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "try-selenium-pro",
+  "private_key_id": "b5215b62b8f8859edfa073e12fe187d41064f76a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCP9YIqhmcJpQuo\n30PBJc2kb/utXjbx4yCrDmBrVsGyOjW0ajF7onjoqIYMTJnE0mi1KqJmfv7a7DZi\n75iJWKt7a37HHn7NfJlKbHHChKthqDcxifgvPvbwakM9gZwLpjGsTKA19qegaxIj\nDIaNnOc//UwMLQdUJhjRVd1UQyyGGOFY+o0A5Wuvuk4iOgFrIKjy6yVzDLFyqxiv\n5wuZO53ZkvDG7RDjD90YQn+af6F+ycI4bf+rra0KsOHNhYtumsn8haDA0x1blgO8\nhwRdBwo7eGuGDTqQz98CevucAbewsXKqxObznReO8QezwfDVcGtFlkaS5VTyeMgu\naPNVIgj3AgMBAAECggEACkIWWm1lXjySjiAKtfK5qqQILRxvkeD7bPUDTeLKvqaD\nOS3wBL1ZHEsV8j5rHqlXqME2/VLDWlpGrdog5niZD5xjVlEH/CCK09DScmf9xmG0\nPSV1t/gmpI8N544azoGzPHHhYLcIzteSXUkBNYoeuGKWTq/Ou+JTFmel8+EthQiZ\neVgAtczYLZZ74nTK/QAsszhaomts2ostuq/IfX291jUXRxMgEb6e7OFzSpmy3AAL\nT5uwnAaVTLwCOxfdAcBUk1GuuxDwSBQLOckQRGnLFvm8h+mh/z/bUyQEJ6fvnkSI\nvhn+qLHhEKOj/HkZO8jxFtYtd59GVsr12pdjmPGbwQKBgQDDDRO7tUfSjvMckB8A\nR3C/SNVfAgQuzyDrzD9s4neLMnsUAjp4RJTwpBUWwXhLPZqKuAv32ZnTiY4xzsEZ\ntcx04QoS1Wh2O9OApmyCIyhI4n2fAPsRyuXikAAaWzQcq+tgeydlST9NPSV9BBtu\nAFQCZe/UKCrW/N6e/qxnjIooJwKBgQC88V75wwiao6Wsh99IhhOWl+/1btZWPOsw\nL4yx1JL+J1ECzY5ahHVntkRsdoVyqrbfz9BsCyHrhashoJW722CttmJV2sUjZUBN\ne9Ryy8rUKa5o4UQMcEvcDMYg+DgaE1jRd0baNqvBMPmqCSne/OYzmkpyGVaBktvM\nIU5Z/ZdKsQKBgBCm3idpS49rStAGcc8ZSkPaWPT6fBbu8fWPg16tWt1UWvOTWSCJ\nYlnE+FPwAnAR+06addMcDajklnIkH5ItVh4oVC7Vb0ygwOa7zomxrK/EPktDzytu\nsf+MoaWeYa2M89RRz0QzY6cZcEji/+B9QK7PuxDWuQmPnwXd4iQY+HaDAoGBAJM8\nDGTZJNVMfQgrgUXEpXMOx0EctA3Tvvp3s03Idxtyi+CBSlMjMVI2aK+U1Hz8pzFV\ngfcP3cjpCuhTeRtA4t+7Znm81y6z8h3vRyiFwnL+YBj+ocaHo7XAhoyeoSlAtk/U\ngPP+8mzDu2pTZbuMm97OdwDe2dhzFrDFq4bY5JKhAoGAJUZCTbAA4DxPGLBUQM/m\nNHEAiwTgDh+8LuZ1YxgxZRqotupVsO5J4mzKa6FPMi2w2jsVyPmLza8jOr9KkpqN\nchUmcfmlFyaycYEdlKktrTCSyzoa03fn/fbHW819BVl4tOUgioKTO7ty8doQmsOf\nnGwspJQ8qkZSPG9YT4C1T8w=\n-----END PRIVATE KEY-----\n",
+  "client_email": "sekai-kyapi@try-selenium-pro.iam.gserviceaccount.com",
+  "client_id": "110261365188553484042",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sekai-kyapi%40try-selenium-pro.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
