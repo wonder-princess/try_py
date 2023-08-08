@@ -13,6 +13,12 @@ from time import sleep
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+# FireFox
+# profile_path = r'C:\Users\Owner\AppData\Roaming\Mozilla\Firefox\Profiles\0007gipx.Default User'
+# profile_path = r'C:\Users\Owner\AppData\Local\Mozilla\Firefox\Profiles\0007gipx.Default User'
+# profile = webdriver.FirefoxProfile(profile_path)
+# driver = webdriver.Firefox(firefox_profile=profile)
+
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 
 # GCP鍵
@@ -25,19 +31,16 @@ gc = gspread.authorize(credentials)
 SPREADSHEET_KEY = '10TIyDRbwX5oZI066yXx3eM4xe-a0g4KqYIRhxn8mCjk'
 
 
-
-# FireFox
-# profile_path = r'C:\Users\Owner\AppData\Roaming\Mozilla\Firefox\Profiles\0007gipx.Default User'
-# profile_path = r'C:\Users\Owner\AppData\Local\Mozilla\Firefox\Profiles\0007gipx.Default User'
-# profile = webdriver.FirefoxProfile(profile_path)
-# driver = webdriver.Firefox(firefox_profile=profile)
-
-url = "https://with.is/messages"
+# url = "https://with.is/messages"
 # url = "https://scraping-for-beginner.herokuapp.com/login_page"
+url = "https://feedly.com/i/collection/content/user/edf3192f-0b80-4568-9b14-0363076afde0/category/global.all"
+
+
 # profile_path = r"C:\Users\Owner\AppData\Local\Google\Chrome\User Data"
-
-
-profile_path = r"C:\Users\Owner\Documents\try_py\chrome_profile"
+# デスクトップ
+# profile_path = r"C:\Users\Owner\Documents\try_py\chrome_profile"
+# ラックトップ
+profile_path = r"C:\Users\sekai\OneDrive\ドキュメント\try_py\chrome_profile"
 account_name = "login_seleninium"
 
 # Chrome
@@ -52,19 +55,30 @@ def openBrowser():
     browser.get(url)
     return browser
 
-def getVal(browser):
+def getVal_with(browser):
     elems = browser.find_elements(By.CLASS_NAME, 'topic_nickname')
-    
     print('-getval-')
-    
+    items = []
     for elem in elems:
         print(elem.text)
-        
-def rightVal():
-    elems = browser.find_elements(By.CLASS_NAME, 'topic_nickname')
-    
-    
+        items.append(elem.text)
+    return items
 
+def getVal_feedly(browser):
+    elemTitles = []
+    elemUrls = []
+    elem_EntryList__chunks = browser.find_elements(By.CLASS_NAME, 'EntryList__chunk')
+    for elem_EntryList__chunk in elem_EntryList__chunks:
+        EntryTitleLinks = elem_EntryList__chunk.find_elements(By.CLASS_NAME,"EntryTitleLink")
+        for EntryTitleLink in EntryTitleLinks:
+            print(EntryTitleLink.text)
+            print(EntryTitleLink.get_attribute('href'))
+            elemTitles.append(EntryTitleLink.text)
+            elemUrls.append(EntryTitleLink.get_attribute('href'))
+    
+    items = [elemTitles, elemUrls]
+    return items
+    
 def login_imanishi(browser):
     elem_username = browser.find_element(By.ID, 'username')
     elem_password = browser.find_element(By.ID, 'password')
@@ -75,24 +89,37 @@ def login_imanishi(browser):
     elem_login_btn.click()
 
 def getVal_imanishi(browser):
-    val = browser.find_element(By.ID, 'name')
-    print(val.text)
+    elems = browser.find_elements(By.TAG_NAME, 'td')
+    items = []
+    print('-getval-')
+    for elem in elems:
+        # print(elem.text)
+        items.append(elem.text)
+    return items
 
+def rightGspread(items):
+    #共有設定したスプレッドシートの1枚目のシートを開く
+    worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
     
-    
+    # worksheet.append_row(items)
+    # for num in range(len(items)+1):
+   
+    count = 1
+    for (title, data) in zip(items[0], items[1]):
+        cell = worksheet.update('A' + str(count), title)
+        cell = worksheet.update('B' + str(count), data)
+        
+        count += 1
+        
 browser = openBrowser()
 
 # login_imanishi(browser)
-# getVal_imanishi(browser)
+# items = getVal_imanishi(browser)
+# getVal_with(browser)
 
-getVal(browser)
+sleep(10)
+
+items = getVal_feedly(browser)
+rightGspread(items)
 
 browser.quit()
-
-#共有設定したスプレッドシートの1枚目のシートを開く
-worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
-
-#書き込み用の文字列を作成
-items = ['Hello', 'World']
-# シートへ文字列を追加
-worksheet.append_row(items)
