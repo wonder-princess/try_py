@@ -57,15 +57,16 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name(Config.json, Conf
 gc = gspread.authorize(credentials)
 
 def getVal_with():
+    global items
     elems = browser.find_elements(By.CLASS_NAME, 'topic_nickname')
     print('-getval-')
     items = []
     for elem in elems:
         print(elem.text)
         items.append(elem.text)
-    return items
 
 def getVal_feedly():
+    global dataset
     elemTitles = []
     elemUrls = []
     elem_EntryList__chunks = browser.find_elements(By.CLASS_NAME, 'EntryList__chunk')
@@ -96,7 +97,6 @@ def getVal_imanishi():
     for elem in elems:
         # print(elem.text)
         items.append(elem.text)
-    return items
 
 def rightGspread(dataset):
     #共有設定したスプレッドシートの1枚目のシートを開く
@@ -116,8 +116,6 @@ def rightGspread(dataset):
 def openNewTab(url):
     browser.execute_script(f"window.open('{url}');")
     
-# openBrowser()
-
 browser = ChromeBrowzer.browser
 
 # login_imanishi(browser)
