@@ -8,6 +8,8 @@ from selenium.webdriver.chrome.options import Options
 from time import sleep
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import pandas as pd
+import os
 
 # from webdriver_manager.firefox import GeckoDriverManager
 # from selenium.webdriver import FirefoxProfile
@@ -113,6 +115,13 @@ def rightGspread(dataset):
         if count <= 5:
             break
         
+def rightExcel():
+    currentDir = os.getcwd()
+    fileName = "output.xlsx"
+
+    df = pd.DataFrame(dataset, columns=['タイトル', 'URL'])
+    df.to_excel(currentDir + '/' + fileName, sheet_name='new_sheet_name')
+            
 def openNewTab(url):
     browser.execute_script(f"window.open('{url}');")
     
@@ -125,10 +134,12 @@ browser = ChromeBrowzer.browser
 sleep(5)
 
 getVal_feedly()
-rightGspread(dataset)
+# rightGspread(dataset)
 
 print('取得数: ', len(dataset[0]))
-print(dataset[0][0])
-openNewTab(dataset[1][0])
+# print(dataset[0][0])
+# openNewTab(dataset[1][0])
 
-# browser.quit()
+rightExcel()
+
+browser.quit()
