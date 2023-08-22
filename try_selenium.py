@@ -26,7 +26,7 @@ import os
 
 # url = "https://feedly.com/i/label/feedly.history"
 url = "https://feedly.com/i/collection/content/user/edf3192f-0b80-4568-9b14-0363076afde0/category/global.all"
-dataset = []
+dataset = pd.DataFrame(index=[], columns=[])
 items = []
 
 class Config:
@@ -40,9 +40,9 @@ class Config:
 
     # profile_path = r"C:\Users\Owner\AppData\Local\Google\Chrome\User Data"
     # デスクトップ
-    # profile_path = r"C:\Users\Owner\Documents\try_py\chrome_profile"
+    profile_path = r"C:\Users\Owner\Documents\try_py\chrome_profile"
     # ラックトップ
-    profile_path = r"C:\Users\sekai\OneDrive\ドキュメント\try_py\chrome_profile"
+    # profile_path = r"C:\Users\sekai\OneDrive\ドキュメント\try_py\chrome_profile"
     account_name = "login_seleninium"
 
 class ChromeBrowzer:
@@ -71,18 +71,19 @@ def getVal_feedly():
     global dataset
     elemTitles = []
     elemUrls = []
+    
     elem_EntryList__chunks = browser.find_elements(By.CLASS_NAME, 'EntryList__chunk')
     print('EntryList__chunks: ', len(elem_EntryList__chunks))
     for elem_EntryList__chunk in elem_EntryList__chunks:
         EntryTitleLinks = elem_EntryList__chunk.find_elements(By.CLASS_NAME,"EntryTitleLink")
         print('EntryTitleLinks: ', len(EntryTitleLinks))
         for EntryTitleLink in EntryTitleLinks:
-            print(EntryTitleLink.text)
-            print(EntryTitleLink.get_attribute('href'))
+            # print(EntryTitleLink.text)
+            # print(EntryTitleLink.get_attribute('href'))
             elemTitles.append(EntryTitleLink.text)
             elemUrls.append(EntryTitleLink.get_attribute('href'))
-    dataset.append(elemTitles)
-    dataset.append(elemUrls)
+    
+    pd.concat(dataset, pd.Series(elemTitles), pd.Series(elemUrls))
     
 def login_imanishi():
     elem_username = browser.find_element(By.ID, 'username')
