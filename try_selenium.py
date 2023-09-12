@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 
 # from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service as ChromeService
 
 from time import sleep
 import gspread
@@ -29,8 +30,8 @@ import pyautogui
 # url = "https://scraping-for-beginner.herokuapp.com/login_page"
 
 # url = "https://feedly.com/i/label/feedly.history"
-url = "https://feedly.com/i/collection/content/user/edf3192f-0b80-4568-9b14-0363076afde0/category/global.all"
-url = "https://with.is/campaigns/173/users?page=78&paging_order=2"
+# url = "https://feedly.com/i/collection/content/user/edf3192f-0b80-4568-9b14-0363076afde0/category/global.all"
+url = "https://with.is/campaigns/175/users"
 # dataset = pd.DataFrame(index=[], columns=[])
 
 class Config:
@@ -60,15 +61,24 @@ class ChromeBrowzer:
     browser.get(url)
     browser.set_window_size(1280,800)
     
-
-
+class ChromeBrowzer_headless:
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--user-data-dir=' + Config.profile_path)
+    options.add_argument(f'--profile-directory={Config.account_name}')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_experimental_option('detach', True)
+    browser = webdriver.Chrome(options=options)
+    browser.get(url)
+    browser.set_window_size(1280,800)
 
 dataFrame = pd.DataFrame(index=[])
 dataset = []
 items = []
 browser = ChromeBrowzer.browser
-credentials = ServiceAccountCredentials.from_json_keyfile_name(Config.json, Config.scope)
-gc = gspread.authorize(credentials)
+# credentials = ServiceAccountCredentials.from_json_keyfile_name(Config.json, Config.scope)
+# gc = gspread.authorize(credentials)
 
 def getVal_with_userUrl_campaigns():
     global dataFrame
@@ -84,22 +94,50 @@ def getVal_with_userUrl_campaigns():
 
 def getVal_with_userUrl_campaigns_():
     global dataFrame
-    dataFrame = pd.DataFrame(columns=['userid', 'URL'])
+    dataFrame = pd.DataFrame(columns=['名前', '年齢&居住地', 'いいね数', 'URL', 'カード'])
+    userUrls = []
     elem_grid = browser.find_element(By.CLASS_NAME, 'grid')
     elem_users = elem_grid.find_elements(By.CLASS_NAME, 'user-card-small')
-    for elem_user in elem_users:
+    for i, elem_user in enumerate(elem_users, 1):
         userid = elem_user.get_attribute('data-user-id')
-        if userid == '':
+        
+        # 10人取得
+        if i > 10:
+            break
+        
+        if userid == "":
             continue
-        get_with_userProfileData(f"https://with.is/users/{userid}")
-
+        userUrls.append(f"https://with.is/users/{userid}")
+        print(f"{i} : {userid}")
+    for userUlr in userUrls:
+        browser.get(userUlr)
+        sleep(0.1)
+        get_with_userProfileData(userUlr)
+        
 def get_with_userProfileData(userUrl):
     global dataFrame
-    browser.execute_script(f"window.open('{url}');")
+    # browser.execute_script(f"window.open('{url}');")
+    browser.get(userUrl)
     userNmae = browser.find_element(By.CLASS_NAME, 'profile_main-nickname').text
     userAgeAddress = browser.find_element(By.CLASS_NAME, 'profile_main-age-address').text
-
+    userLikesCount = browser.find_element(By.CLASS_NAME, 'user-likes-count').text
     
+    # テーブル取得
+    # elem_profileDetail = browser.find_element(By.XPATH, 'profile-detail_lists')
+    
+    GroupCardsList = get_with_userProfileData(f"{userUrl}/groups")
+
+    record = pd.Series([userNmae, userAgeAddress, userLikesCount, userUrl, GroupCardsList], index = dataFrame.columns)
+    dataFrame = pd.concat([dataFrame, pd.DataFrame([record])], ignore_index=True)
+    
+def get_with_userGroupCard(userCardUlr):
+    global dataFrame
+    GroupCardsList = []
+    browser.get(userCardUlr)
+    elem_GroupCards = browser.find_elements(By.CLASS_NAME, 'group-card_title')
+    for elem_GroupCard in elem_GroupCards:
+        GroupCardsList.append(elem_GroupCard.text)
+    return GroupCardsList
 
 def getVal_feedly():
     global dataFrame
@@ -208,11 +246,11 @@ def scrollWindow_():
             sleep(0.1)
 
         #１秒待って、スクロール後のページの高さを取得する
-        sleep(1)
+        sleep(0.5)
         new_last_height = browser.execute_script("return document.body.scrollHeight")
         
-        #スクロール前後でページの高さに変化がなくなったら無限スクロール終了とみなしてループを抜ける
-        if last_height == new_last_height or int(last_top) > 1000000:
+        #スクロール前後でページの高さに変化がなくなるか、高さ100000を超えると無限スクロール終了とみなしてループを抜ける
+        if last_height == new_last_height or int(last_top) > 100000:
             print("スクロール終了")
             break
         
@@ -223,8 +261,9 @@ def scrollWindow_():
 # items = getVal_imanishi(browser)
 
 
-scrollWindow_()
-getVal_with_userUrl_campaigns()
+# scrollWindow_()
+sleep(1)
+getVal_with_userUrl_campaigns_()
 
 # getVal_feedly()
 # rightGspread(dataset)
