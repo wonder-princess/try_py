@@ -78,7 +78,7 @@ browser = ChromeBrowzer.browser
 # credentials = ServiceAccountCredentials.from_json_keyfile_name(Config.json, Config.scope)
 # gc = gspread.authorize(credentials)
 
-def get_with_userdata():
+def with_get_userdata():
     browser.get("https://with.is/campaigns/175/users")
     scroll_window()
     with_get_userUrl_campaigns()
@@ -103,9 +103,9 @@ def with_get_userUrl_campaigns():
     for userUlr in userUrls:
         browser.get(userUlr)
         sleep(0.1)
-        get_with_user_profile(userUlr)
+        with_get_user_profile(userUlr)
         
-def get_with_user_profile(userUrl):
+def with_get_user_profile(userUrl):
     global dataFrame
     # browser.execute_script(f"window.open('{url}');")
     browser.get(userUrl)
@@ -130,7 +130,7 @@ def with_get_user_groupcard(userCardUlr):
         GroupCardsList.append(elem_GroupCard.text)
     return GroupCardsList
 
-def getVal_feedly():
+def feedly_get_data():
     global dataFrame
     dataFrame = pd.DataFrame(columns=['タイトル', 'URL', 'ソース', '日付'])
     
@@ -149,7 +149,7 @@ def getVal_feedly():
             record = pd.Series([articlTitleText, articlTitleLink, articlSauce.text, articlDate], index = dataFrame.columns)
             dataFrame = pd.concat([dataFrame, pd.DataFrame([record])], ignore_index=True)
     
-def login_imanishi():
+def imanishi_login():
     elem_username = browser.find_element(By.ID, 'username')
     elem_password = browser.find_element(By.ID, 'password')
     elem_login_btn = browser.find_element(By.ID, 'login-btn')
@@ -157,7 +157,7 @@ def login_imanishi():
     elem_password.send_keys('kohei')
     elem_login_btn.click()
 
-def getVal_imanishi():
+def imanishi_getVal():
     elems = browser.find_elements(By.TAG_NAME, 'td')
     items = []
     print('-getval-')
@@ -193,7 +193,7 @@ def output_csv():
     # fileName = "output.csv"
     
     df = pd.DataFrame(dataFrame)
-    df.to_csv(f"{currentDir}/{nowtime}.csv", index=False)
+    df.to_csv(f"{currentDir}/output/{nowtime}.csv", index=False)
             
 def open_new_tab(url):
     browser.execute_script(f"window.open('{url}');")
@@ -258,7 +258,7 @@ def scroll_window():
 # openNewTab(dataset[1][0])
 
 # outputExcel()
-get_with_userdata()
+with_get_userdata()
 output_csv()
 
 browser.quit()
