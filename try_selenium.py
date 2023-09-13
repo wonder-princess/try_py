@@ -58,7 +58,6 @@ class ChromeBrowzer:
     options.add_argument('--disable-dev-shm-usage')
     options.add_experimental_option('detach', True)
     browser = webdriver.Chrome(options=options)
-    browser.get(url)
     browser.set_window_size(1280,800)
     
 class ChromeBrowzer_headless:
@@ -70,7 +69,6 @@ class ChromeBrowzer_headless:
     options.add_argument('--disable-dev-shm-usage')
     options.add_experimental_option('detach', True)
     browser = webdriver.Chrome(options=options)
-    browser.get(url)
     browser.set_window_size(1280,800)
 
 dataFrame = pd.DataFrame(index=[])
@@ -80,19 +78,12 @@ browser = ChromeBrowzer.browser
 # credentials = ServiceAccountCredentials.from_json_keyfile_name(Config.json, Config.scope)
 # gc = gspread.authorize(credentials)
 
-def getVal_with_userUrl_campaigns():
-    global dataFrame
-    dataFrame = pd.DataFrame(columns=['userid', 'URL'])
-    elem_grid = browser.find_element(By.CLASS_NAME, 'grid')
-    elem_users = elem_grid.find_elements(By.CLASS_NAME, 'user-card-small')
-    for elem_user in elem_users:
-        userid = elem_user.get_attribute('data-user-id')
-        if userid == '':
-            continue
-        record = pd.Series([userid, f"https://with.is/users/{userid}"], index = dataFrame.columns)
-        dataFrame = pd.concat([dataFrame, pd.DataFrame([record])], ignore_index=True)
+def get_with_userdata():
+    browser.get("https://with.is/campaigns/175/users")
+    scroll_window()
+    with_get_userUrl_campaigns()
 
-def getVal_with_userUrl_campaigns_():
+def with_get_userUrl_campaigns():
     global dataFrame
     dataFrame = pd.DataFrame(columns=['名前', '年齢&居住地', 'いいね数', 'URL', 'カード'])
     userUrls = []
@@ -112,9 +103,9 @@ def getVal_with_userUrl_campaigns_():
     for userUlr in userUrls:
         browser.get(userUlr)
         sleep(0.1)
-        get_with_userProfileData(userUlr)
+        get_with_user_profile(userUlr)
         
-def get_with_userProfileData(userUrl):
+def get_with_user_profile(userUrl):
     global dataFrame
     # browser.execute_script(f"window.open('{url}');")
     browser.get(userUrl)
@@ -125,12 +116,12 @@ def get_with_userProfileData(userUrl):
     # テーブル取得
     # elem_profileDetail = browser.find_element(By.XPATH, 'profile-detail_lists')
     
-    GroupCardsList = get_with_userProfileData(f"{userUrl}/groups")
+    GroupCardsList = with_get_user_groupcard(f"{userUrl}/groups")
 
     record = pd.Series([userNmae, userAgeAddress, userLikesCount, userUrl, GroupCardsList], index = dataFrame.columns)
     dataFrame = pd.concat([dataFrame, pd.DataFrame([record])], ignore_index=True)
     
-def get_with_userGroupCard(userCardUlr):
+def with_get_user_groupcard(userCardUlr):
     global dataFrame
     GroupCardsList = []
     browser.get(userCardUlr)
@@ -174,7 +165,7 @@ def getVal_imanishi():
         # print(elem.text)
         items.append(elem.text)
 
-def outputGspread(dataset):
+def output_gspread(dataset):
     #共有設定したスプレッドシートの1枚目のシートを開く
     worksheet = gc.open_by_key(Config.SPREADSHEET_KEY).sheet1
     
@@ -189,14 +180,14 @@ def outputGspread(dataset):
         if count <= 5:
             break
         
-def outputExcel():
+def output_excel():
     currentDir = os.getcwd()
     nowtime =  datetime.datetime.now().strftime("%y-%m-%d %H-%M-%S")
 
     df = pd.DataFrame(dataset, columns=['タイトル', 'URL'])
     df.to_excel(f"{currentDir}/{nowtime}.xlsx")
     
-def outputCsv():
+def output_csv():
     currentDir = os.getcwd()
     nowtime =  datetime.datetime.now().strftime("%y-%m-%d %H-%M-%S")
     # fileName = "output.csv"
@@ -204,10 +195,10 @@ def outputCsv():
     df = pd.DataFrame(dataFrame)
     df.to_csv(f"{currentDir}/{nowtime}.csv", index=False)
             
-def openNewTab(url):
+def open_new_tab(url):
     browser.execute_script(f"window.open('{url}');")
     
-def scrollWindow():
+def scroll_window_():
     # browser.find_element(By.TAG_NAME, 'body').click()
     
     # pyautogui.scroll(-800)
@@ -221,8 +212,8 @@ def scrollWindow():
     # nowItems = browser.execute_script("return document.getElementsByClassName('ListView__ItemContainer-sc-1veaxzq-1')")
     # browser.execute_script("document.getElementsByClassName('ListView__ItemContainer-sc-1veaxzq-1')[%d].scrollIntoView(true)" % int(len(nowItems)-1))
 
-def scrollWindow_():
-    sleep(5)
+def scroll_window():
+    sleep(1)
     #ブラウザのウインドウ高を取得する
     win_height = browser.execute_script("return window.innerHeight")
     print(f"ブラウザの高さ{win_height}")
@@ -245,8 +236,8 @@ def scrollWindow_():
             browser.execute_script(f"window.scrollTo(0, {top})")
             sleep(0.1)
 
-        #１秒待って、スクロール後のページの高さを取得する
-        sleep(0.5)
+        #少し待ってスクロール後のページの高さを取得する
+        sleep(0.3)
         new_last_height = browser.execute_script("return document.body.scrollHeight")
         
         #スクロール前後でページの高さに変化がなくなるか、高さ100000を超えると無限スクロール終了とみなしてループを抜ける
@@ -256,14 +247,10 @@ def scrollWindow_():
         
         #次のループのスクロール開始位置を設定
         last_top = last_height
+    sleep(1)
     
 # login_imanishi(browser)
 # items = getVal_imanishi(browser)
-
-
-# scrollWindow_()
-sleep(1)
-getVal_with_userUrl_campaigns_()
 
 # getVal_feedly()
 # rightGspread(dataset)
@@ -271,7 +258,7 @@ getVal_with_userUrl_campaigns_()
 # openNewTab(dataset[1][0])
 
 # outputExcel()
-
-outputCsv()
+get_with_userdata()
+output_csv()
 
 browser.quit()
